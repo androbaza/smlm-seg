@@ -13,9 +13,9 @@
   * focal doublets to adjust the pixel sizes to 107 nm (EMCCD) and 65 nm (event-based sensor) in the object plane.
   
 ### Software
-* Software is available at the (corresponding github repo)[https://github.com/Clement-Cabriel/Evb-SMLM].
+* Software is available at the [corresponding github repo](https://github.com/Clement-Cabriel/Evb-SMLM).
 
-### Next step
+### Next steps:
 * lend the camera from IOF?
 * find smlm setup that could be suitably modified.
 * try to run the code with the example 10-second recording of blinking from event camera.
