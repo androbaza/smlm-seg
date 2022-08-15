@@ -13,7 +13,7 @@
   * focal doublets to adjust the pixel sizes to 107 nm (EMCCD) and 65 nm (event-based sensor) in the object plane.
   
 ### Software
-* Software is available at the [corresponding github repo](https://github.com/Clement-Cabriel/Evb-SMLM).
+* Software is available at the [corresponding github repo](https://github.com/Clement-Cabriel/Evb-SMLM). The code is quite well documented and seems readable, at first glance.
 
 ### Next steps:
 * lend the camera from IOF?
