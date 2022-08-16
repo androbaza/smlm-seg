@@ -16,7 +16,7 @@
 * Software is available at the [corresponding github repo](https://github.com/Clement-Cabriel/Evb-SMLM). The code is quite well documented and seems readable, at first glance.
 
 ### Next steps:
-* lend the camera from IOF?
+* lend the camera from IOF? It is the same camera, as I remember, what increases our chances in painless setting up according to existing manual.
 * find smlm setup that could be suitably modified.
 * try to run the code with the example 10-second recording of blinking from event camera.
 
