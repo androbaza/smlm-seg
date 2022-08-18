@@ -20,4 +20,9 @@
 * find smlm setup that could be suitably modified.
 * try to run the code with the example 10-second recording of blinking from event camera.
 
+## Segmentation task:
+* installed corresponding repos to ubuntu --> so much better to work with PC!
+* rewriting the pipeline for MTs and vesicles in two separate notebooks.
+* found a way to put back the tiles together: [pyvips](https://github.com/libvips/pyvips)
+
 # September'22
