@@ -22,7 +22,7 @@
 
 ## Segmentation task:
 * installed corresponding repos to ubuntu --> so much better to work with PC!
-* rewriting the pipeline for MTs and vesicles in two separate notebooks.
-* found a way to put back the tiles together: [pyvips](https://github.com/libvips/pyvips)
+* rewriting the pipeline for MTs and vesicles in two separate scripts.
+* got the tiles working again
 
 # September'22
