@@ -177,6 +177,14 @@ def combine_masks(mt_images_list, mt_masks_list, ves_images_list, ves_masks_list
         print(k)
     print('finished')
 
+def convert_to_bit_mask(input_dir, output_dir):
+    for fname in os.listdir(input_dir):
+        img = imread(os.path.join(input_dir, fname), as_gray=1)
+        mt = (img == 255)
+        ves = (img == 180)
+        img[mt] = 1
+        img[ves] = 2
+        imsave(os.path.join(output_dir, fname), img, check_contrast=0)
 
 
 def list_files(path):

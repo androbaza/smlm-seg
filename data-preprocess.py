@@ -1,6 +1,6 @@
 import os
 from natsort import natsorted
-from helpers import *
+from resources.helpers import *
 
 # input_dir = './data/mt/raw_inputs/'
 mt_images_path = '/home/smlm-workstation/segmentation/data/mt/tiles/'
@@ -28,10 +28,10 @@ ves_masks_path = '/home/smlm-workstation/segmentation/data/ves/masks/'
 # clean_folder(ves_masks_path)
 # ves_process(input_dir, ves_masks_path)
 
-mt_images_list, mt_masks_list = get_img_mask_list(
-    mt_images_path, mt_masks_path)
-ves_images_list, ves_masks_list = get_img_mask_list(
-    ves_images_path, ves_masks_path)
+# mt_images_list, mt_masks_list = get_img_mask_list(
+#     mt_images_path, mt_masks_path)
+# ves_images_list, ves_masks_list = get_img_mask_list(
+#     ves_images_path, ves_masks_path)
 
 output_dir_img = '/home/smlm-workstation/segmentation/data/combined/images/'
 output_dir_masks = '/home/smlm-workstation/segmentation/data/combined/masks/'
@@ -39,6 +39,11 @@ output_dir_masks = '/home/smlm-workstation/segmentation/data/combined/masks/'
 # clean_folder(output_dir_img)
 # clean_folder(output_dir_masks)
 
-combine_masks(natsorted(mt_images_list), natsorted(mt_masks_list),
-              natsorted(ves_images_list), natsorted(ves_masks_list),
-              output_dir_img, output_dir_masks)
+# combine_masks(natsorted(mt_images_list), natsorted(mt_masks_list),
+#               natsorted(ves_images_list), natsorted(ves_masks_list),
+#               output_dir_img, output_dir_masks)
+
+input_dir_masks = '/home/smlm-workstation/segmentation/data/combined/masks/'
+output_dir_bit_masks = '/home/smlm-workstation/segmentation/data/combined/bit_masks'
+
+convert_to_bit_mask(input_dir_masks, output_dir_bit_masks)

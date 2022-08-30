@@ -22,7 +22,9 @@
 
 ## Segmentation task:
 * installed corresponding repos to ubuntu --> so much better to work with PC!
-* rewriting the pipeline for MTs and vesicles in two separate scripts.
-* got the tiles working again
+* rewriting the pipeline for MTs and vesicles in two separate scripts --> done.
+* got the tiles working again.
+* anna-palm works only with CPU-tensorflow on RTX3090.
+* 
 
 # September'22
