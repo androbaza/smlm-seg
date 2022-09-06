@@ -28,3 +28,11 @@
 * 
 
 # September'22
+
+## Notes and ideas
+* It is possible to predict the covered structure behind the other one --> discuss whether this is worth doing.
+
+## Aims and Logs
+* Train the model with and without pretrained backbone with same hyperparameters.
+* Add new data from Gregor to the dataset.
+* Add new classes of organelles.
