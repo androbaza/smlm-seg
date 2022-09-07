@@ -31,6 +31,7 @@
 
 ## Notes and ideas
 * It is possible to predict the covered structure behind the other one --> discuss whether this is worth doing.
+* Add full resolution images to the dataset along with 512px crops.
 
 ## Aims and Logs
 * Train the model with and without pretrained decoder with same hyperparameters.
@@ -38,3 +39,9 @@
   * Try different decoder models available for HRNet backbone and ResNet.
 * Add new data from Gregor to the dataset.
 * Add new classes of organelles.
+
+| Backbone | Decoder | Pretrained |  mIoU |
+|:--------:|:-------:|:----------:|:-----:|
+|   HRNet  |  FCN48  |      +     | 84.91 |
+|   HRNet  |  FCN48  |      -     |  65.3 |
+|   HRNet  |  FCN48  |      +     | 84.18 |
