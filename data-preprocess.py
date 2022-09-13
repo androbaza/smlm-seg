@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from natsort import natsorted
 from resources.helpers import *
 
@@ -46,4 +47,9 @@ output_dir_masks = '/home/smlm-workstation/segmentation/data/combined/masks/'
 input_dir_masks = '/home/smlm-workstation/segmentation/data/combined/masks/'
 output_dir_bit_masks = '/home/smlm-workstation/segmentation/data/combined/bit_masks'
 
-convert_to_bit_mask(input_dir_masks, output_dir_bit_masks)
+# convert_to_bit_mask(input_dir_masks, output_dir_bit_masks)
+
+input_dir = '/home/smlm-workstation/segmentation/data/npy/clathrin'
+output_dir = '/home/smlm-workstation/segmentation/data/clathrin/raw_inputs'
+
+save_npy(input_dir, output_dir)

@@ -33,12 +33,16 @@
 * It is possible to predict the covered structure behind the other one --> discuss whether this is worth doing.
 * Add full resolution images to the dataset along with 512px crops.
 
-## Aims and Logs
+## Aims 
 * Train the model with and without pretrained decoder with same hyperparameters.
   * The backbone (encoder) is usually left with pretrained weights for segmentation tasks. 
   * Try different decoder models available for HRNet backbone and ResNet.
 * Add new data from Gregor to the dataset.
 * Add new classes of organelles.
+
+## Logs
+* loaded new data from Gregor
+* researched whether more than 8 bits in images is helpful for segmentation --> the cost of overhead is higher than benefits.
 
 | Backbone | Decoder | Pretrained |  mIoU |
 |:--------:|:-------:|:----------:|:-----:|

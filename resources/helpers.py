@@ -18,6 +18,12 @@ from skimage.measure import label
 from skimage.exposure import rescale_intensity
 from skimage.segmentation import random_walker
 
+def save_npy(input_dir, output_dir):
+    for fname in os.listdir(input_dir):
+        imsave(output_dir+fname+'.png', np.load(os.path.join(input_dir,
+               fname), allow_pickle=True), check_contrast=0)
+        
+
 def clean_folder(input_dir):
     for fname in os.listdir(input_dir):
         os.remove(os.path.join(input_dir, fname))
