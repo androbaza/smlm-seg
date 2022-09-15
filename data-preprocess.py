@@ -49,7 +49,7 @@ output_dir_bit_masks = '/home/smlm-workstation/segmentation/data/combined/bit_ma
 
 # convert_to_bit_mask(input_dir_masks, output_dir_bit_masks)
 
-input_dir = '/home/smlm-workstation/segmentation/data/npy/clathrin'
-output_dir = '/home/smlm-workstation/segmentation/data/clathrin/raw_inputs'
+input_dir = '/home/smlm-workstation/segmentation/data/npy/mt_clathrin'
+output_dir = '/home/smlm-workstation/segmentation/data/clathrin/raw_inputs/'
 
 save_npy(input_dir, output_dir)

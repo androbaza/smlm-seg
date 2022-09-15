@@ -43,9 +43,14 @@
 ## Logs
 * loaded new data from Gregor
 * researched whether more than 8 bits in images is helpful for segmentation --> the cost of overhead is higher than benefits.
+* next up: try segmentation with same hyperparameters, but with pixel values as masks.
 
-| Backbone | Decoder | Pretrained |  mIoU |
-|:--------:|:-------:|:----------:|:-----:|
-|   HRNet  |  FCN48  |      +     | 84.91 |
-|   HRNet  |  FCN48  |      -     |  65.3 |
-|   HRNet  |  FCN48  |      +     | 84.18 |
+|  Backbone  |    Decoder   | Pretrained |  mIoU |
+|:----------:|:------------:|:----------:|:-----:|
+|    HRNet   |     FCN48    |      +     | 84.91 |
+|    HRNet   |     FCN48    |      -     |  65.3 |
+|    HRNet   |     FCN48    |      +     | 84.18 |
+|    HRNet   |     FCN48    |      +     | 85.71 |
+| DeepLabV3+ |  ResNetV1c18 |      +     | 87.89 |
+| DeepLabV3+ |  ResNetV1c50 |      +     | 90.87 |
+| DeepLabV3+ | ResNetV1c100 |      +     | 85.93 |

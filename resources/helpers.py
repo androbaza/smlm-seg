@@ -17,11 +17,17 @@ from skimage import morphology
 from skimage.measure import label
 from skimage.exposure import rescale_intensity
 from skimage.segmentation import random_walker
+from multiprocessing import Pool
 
 def save_npy(input_dir, output_dir):
-    for fname in os.listdir(input_dir):
-        imsave(output_dir+fname+'.png', np.load(os.path.join(input_dir,
-               fname), allow_pickle=True), check_contrast=0)
+    filenames = [os.path.join(input_dir, fname) for fname in os.listdir(input_dir)]
+    with Pool() as pool:
+        pool.map(save_png, filenames)
+
+
+def save_png(fname):
+    imsave('/home/smlm-workstation/segmentation/data/mt_cl/'+os.path.splitext(os.path.basename(fname))[0] + '.png', np.load(
+        fname, allow_pickle=True).astype(np.uint8), check_contrast=0)
         
 
 def clean_folder(input_dir):
