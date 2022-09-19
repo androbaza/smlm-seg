@@ -44,6 +44,7 @@
 * loaded new data from Gregor
 * researched whether more than 8 bits in images is helpful for segmentation --> the cost of overhead is higher than benefits.
 * next up: try segmentation with same hyperparameters, but with pixel values as masks.
+* find if there is a better framework (fastai, hugginface, detectron2) --> mmdet turned out to be the best.
 
 |  Backbone  |    Decoder   | Pretrained |  mIoU |
 |:----------:|:------------:|:----------:|:-----:|
