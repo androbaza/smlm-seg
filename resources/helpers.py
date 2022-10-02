@@ -1,29 +1,88 @@
+from jax import jit
+import jax.numpy as jnp
+from os.path import exists
 from os import listdir
 from os.path import isfile, join
 import numpy as np
 import cv2
 import skimage
 import os
-import pathlib
-import glob
 from natsort import natsorted
-from pathlib import *
-from openslide import open_slide
+# from pathlib import *
+# from openslide import open_slide
 from PIL import Image
-from openslide.deepzoom import DeepZoomGenerator
+# from openslide.deepzoom import DeepZoomGenerator
 import matplotlib.pyplot as plt
 from skimage.io import imread, imshow, imsave
-from skimage import morphology
-from skimage.measure import label
-from skimage.exposure import rescale_intensity
-from skimage.segmentation import random_walker
+# from skimage import morphology
+# from skimage.measure import label
+# from skimage.exposure import rescale_intensity
+# from skimage.segmentation import random_walker
 from multiprocessing import Pool
+# from PIL import ImageFile
+# ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 def save_npy(input_dir, output_dir):
     filenames = [os.path.join(input_dir, fname) for fname in os.listdir(input_dir)]
     with Pool() as pool:
         pool.map(save_png, filenames)
 
+def save_grey_p(input_dir, output_dir):
+    filenames = [os.path.join(input_dir, fname) for fname in os.listdir(input_dir)]
+    with Pool() as pool:
+        pool.map(save_grey, filenames)
+
+
+def calc_weights(input_dir):
+    filenames = natsorted([os.path.join(input_dir, fname)
+                 for fname in os.listdir(input_dir)])
+    mt, cl, bg = np.float32(0), np.float32(0), np.float32(0)
+
+    for filename in filenames:
+        print(mt, cl, bg)
+        img = imread(filename, as_gray=1)
+        mt += np.count_nonzero(img == 1)
+        cl += np.count_nonzero(img == 2)
+        bg += np.count_nonzero(img == 0)
+        del img
+
+    all_p = np.float32(mt+cl+bg)
+    w_bg = bg/all_p
+    w_mt = mt/all_p
+    w_cl = cl/all_p
+    print(w_bg, w_mt, w_cl)
+    print(bg, mt, cl, all_p)
+    with open('/home/smlm-workstation/segmentation/data/full_combined/weights.txt', 'w') as f:
+        f.write(str(w_bg)+' '+str(w_mt)+' '+str(w_cl))
+
+def calculate_num_pixels(fname):
+    img = imread(fname, as_gray=1)
+    mt = np.count_nonzero(img == 1)
+    cl = np.count_nonzero(img == 2)
+    bg = 42784681 - (mt + cl)
+    return mt, cl, bg
+
+def convert_to_bit_mask(input_dir, output_dir):
+    filenames = natsorted([os.path.join(input_dir, fname)
+                 for fname in os.listdir(input_dir)])
+
+    # filenames = natsorted(os.listdir(input_dir))
+    # existing = natsorted(os.listdir(output_dir))
+    # files = [x for x in filenames if x not in existing]
+    # files2 = [os.path.join(input_dir, fname) for fname in files]
+    
+    with Pool() as pool:
+        pool.map(convert_to_bit_mask_p, filenames)
+
+def convert_to_bit_mask_p(fname):
+    img = imread(fname, as_gray=1)
+    img[img == 255] = 1
+    img[img == 180] = 2
+    imsave(os.path.join('/home/smlm-workstation/segmentation/data/full_combined/bit_masks/',
+           os.path.basename(fname)), img, check_contrast=0)
+
+def save_grey(fname):
+    imsave('/home/smlm-workstation/segmentation/data/ves/'+os.path.splitext(os.path.basename(fname))[0] + '.png', imread(fname, as_gray=True), check_contrast=0)
 
 def save_png(fname):
     imsave('/home/smlm-workstation/segmentation/data/mt_cl/'+os.path.splitext(os.path.basename(fname))[0] + '.png', np.load(
@@ -60,51 +119,70 @@ def make_tiles_w_overlap(input_dir, output_dir):
         img_n += 1
 
 
-def anna_palm_process(input_dir, output_dir):
+def make_pixelwise_mask_pad(input_dir, output_dir, output_dir_mask, size=6541):
     for fname in os.listdir(input_dir):
-        if fname.endswith("reco_B_b0_i0.tif"):
-            img = imread(os.path.join(input_dir, fname), as_gray=1)
-            # blur = (cv2.GaussianBlur(img, (3, 3), 0)*255).astype(np.uint8)
-            blur = (img*255).astype(np.uint8)
-            # ret, fig = cv2.threshold(
-            #     blur, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-            
-            ret, fig2 = cv2.threshold(
-                blur, 5, 255, cv2.THRESH_BINARY)
-
-            fig = morphology.erosion(fig2, selem=morphology.disk(1))
-            # filtered1 = morphology.erosion(morphology.dilation(labels2, morphology.square(4)), morphology.square(2))
-
-            filtered = (morphology.remove_small_objects(
-                fig > 0, 50)).astype(np.uint8)*255
-
-            imsave(os.path.join(output_dir, os.path.splitext(
-                os.path.splitext(fname)[0])[0])+"_999.png", filtered, check_contrast=0)
-        else:
-            os.remove(os.path.join(input_dir, fname))
-
-
-def ves_process(input_dir, output_dir):
-    for fname in os.listdir(input_dir):
-
         img = imread(os.path.join(input_dir, fname), as_gray=1)
-        markers = np.zeros(img.shape, dtype=np.uint)
-        markers[img < 0.01] = 1
-        markers[img > 0.05] = 2
+        
+        h,w = img.shape[0], img.shape[1]
 
-        # Run random walker algorithm
-        labels = random_walker(img, markers, beta=5, mode='bf')
-        labels2 = rescale_intensity(labels, out_range=(0, 1))
-
-        filtered2 = morphology.remove_small_holes(
-            morphology.remove_small_objects(
-                labels2 > 0, 100),
-            350).astype(np.uint8)*255
-
-        filtered = morphology.dilation(filtered2, selem = morphology.disk(3))
+        a = (size - h) // 2
+        aa = size - a - h
+        b = (size - w) // 2
+        bb = size - b - w
+        padded = np.pad(img, pad_width=((a, aa), (b, bb)), mode='constant')
 
         imsave(os.path.join(output_dir, os.path.splitext(
-            os.path.splitext(fname)[0])[0])+"_999.png", filtered, check_contrast=0)
+            os.path.splitext(fname)[0])[0])+"_padded.png", padded.astype(np.uint8), check_contrast=0)
+
+        padded = (padded > 0)*255
+        imsave(os.path.join(output_dir_mask, os.path.splitext(
+            os.path.splitext(fname)[0])[0])+"_mask_padded.png", padded.astype(np.uint8), check_contrast=0)
+
+# def anna_palm_process(input_dir, output_dir):
+#     for fname in os.listdir(input_dir):
+#         if fname.endswith("reco_B_b0_i0.tif"):
+#             img = imread(os.path.join(input_dir, fname), as_gray=1)
+#             # blur = (cv2.GaussianBlur(img, (3, 3), 0)*255).astype(np.uint8)
+#             blur = (img*255).astype(np.uint8)
+#             # ret, fig = cv2.threshold(
+#             #     blur, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+            
+#             ret, fig2 = cv2.threshold(
+#                 blur, 5, 255, cv2.THRESH_BINARY)
+
+#             fig = morphology.erosion(fig2, selem=morphology.disk(1))
+#             # filtered1 = morphology.erosion(morphology.dilation(labels2, morphology.square(4)), morphology.square(2))
+
+#             filtered = (morphology.remove_small_objects(
+#                 fig > 0, 50)).astype(np.uint8)*255
+
+#             imsave(os.path.join(output_dir, os.path.splitext(
+#                 os.path.splitext(fname)[0])[0])+"_999.png", filtered, check_contrast=0)
+#         else:
+#             os.remove(os.path.join(input_dir, fname))
+
+
+# def ves_process(input_dir, output_dir):
+#     for fname in os.listdir(input_dir):
+
+#         img = imread(os.path.join(input_dir, fname), as_gray=1)
+#         markers = np.zeros(img.shape, dtype=np.uint)
+#         markers[img < 0.01] = 1
+#         markers[img > 0.05] = 2
+
+#         # Run random walker algorithm
+#         labels = random_walker(img, markers, beta=5, mode='bf')
+#         labels2 = rescale_intensity(labels, out_range=(0, 1))
+
+#         filtered2 = morphology.remove_small_holes(
+#             morphology.remove_small_objects(
+#                 labels2 > 0, 100),
+#             350).astype(np.uint8)*255
+
+#         filtered = morphology.dilation(filtered2, selem = morphology.disk(3))
+
+#         imsave(os.path.join(output_dir, os.path.splitext(
+#             os.path.splitext(fname)[0])[0])+"_999.png", filtered, check_contrast=0)
 
 
 def combine_masks(mt_images_list, mt_masks_list, ves_images_list, ves_masks_list, output_dir_img, output_dir_masks):
@@ -118,7 +196,7 @@ def combine_masks(mt_images_list, mt_masks_list, ves_images_list, ves_masks_list
                  for mask in (read(f) for f in ves_masks_list)]
     
     k = 0
-    for i in range(0, len(images_mt), 3):
+    for i in range(0, len(images_mt)):
         for j in range(0, len(images_ves)):
             
             # save original overlap
@@ -129,16 +207,16 @@ def combine_masks(mt_images_list, mt_masks_list, ves_images_list, ves_masks_list
                    "{:07d}.png".format(k), comb_mask, check_contrast=0)
 
             # save rotations
-            # rot, rot2 = 0, 270
-            # for x in range(3):
-            #     rot += 90
-            #     rot2 += 90
-            #     k += 1
-            #     comb_mask, comb_im = embed_pair(rotate(images_mt[i], rot), rotate(masks_mt[i], rot), rotate(images_ves[j], rot2), rotate(masks_ves[j], rot2))
-            #     imsave(str(output_dir_img) +
-            #                       "{:07d}.png".format(k), comb_im, check_contrast=0)
-            #     imsave(str(output_dir_masks) +
-            #                       "{:07d}.png".format(k), comb_mask, check_contrast=0)
+            rot, rot2 = 0, 270
+            for x in range(3):
+                rot += 90
+                rot2 += 90
+                k += 1
+                comb_mask, comb_im = embed_pair(rotate(images_mt[i], rot), rotate(masks_mt[i], rot), rotate(images_ves[j], rot2), rotate(masks_ves[j], rot2))
+                imsave(str(output_dir_img) +
+                                  "{:07d}.png".format(k), comb_im, check_contrast=0)
+                imsave(str(output_dir_masks) +
+                                  "{:07d}.png".format(k), comb_mask, check_contrast=0)
 
             # save flipped rotations
             rot, rot2 = 90, 0
@@ -174,29 +252,20 @@ def combine_masks(mt_images_list, mt_masks_list, ves_images_list, ves_masks_list
                        "{:07d}.png".format(k), comb_mask, check_contrast=0)
 
             # save flipped rotations
-            # rot, rot2 = 270, 90
-            # for x in range(3):
-            #   rot += 90
-            #   rot2 += 90
-            #   k += 1
-            #   comb_mask, comb_im = embed_pair(flip(rotate(images_mt[i], rot)), flip(rotate(masks_mt[i], rot)), flip(rotate(images_ves[j], rot2)), flip(rotate(masks_ves[j], rot2)))
-            #   imsave(str(output_dir_img) +
-            #                     "{:07d}.png".format(k), comb_im, check_contrast=0)
-            #   imsave(str(output_dir_masks) +
-            #                     "{:07d}.png".format(k), comb_mask, check_contrast=0)
+            rot, rot2 = 270, 90
+            for x in range(3):
+              rot += 90
+              rot2 += 90
+              k += 1
+              comb_mask, comb_im = embed_pair(flip(rotate(images_mt[i], rot)), flip(rotate(masks_mt[i], rot)), flip(rotate(images_ves[j], rot2)), flip(rotate(masks_ves[j], rot2)))
+              imsave(str(output_dir_img) +
+                                "{:07d}.png".format(k), comb_im, check_contrast=0)
+              imsave(str(output_dir_masks) +
+                                "{:07d}.png".format(k), comb_mask, check_contrast=0)
 
             k += 1
         print(k)
     print('finished')
-
-def convert_to_bit_mask(input_dir, output_dir):
-    for fname in os.listdir(input_dir):
-        img = imread(os.path.join(input_dir, fname), as_gray=1)
-        mt = (img == 255)
-        ves = (img == 180)
-        img[mt] = 1
-        img[ves] = 2
-        imsave(os.path.join(output_dir, fname), img, check_contrast=0)
 
 
 def list_files(path):
