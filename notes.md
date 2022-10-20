@@ -45,7 +45,8 @@
 * researched whether more than 8 bits in images is helpful for segmentation --> the cost of overhead is higher than benefits.
 * next up: try segmentation with same hyperparameters, but with pixel values as masks.
 * find if there is a better framework (fastai, hugginface, detectron2) --> mmdet turned out to be the best.
-* created a dataset with ER, VES+CLATHRIN, MT full image overlaps with zero padding to 6541px. 0.0035031103 0.3504681 0.6460288 79555977258.0 6510370976.0 3653127823.0 89719470000.0
+* created a dataset with ER, VES+CLATHRIN, MT full image overlaps with zero padding to 6541px. 
+* calculated the class distrubution weights to be [Background, MT, Clathrin][0.0035031103, 0.3504681, 0.6460288]
 
 |  Backbone  |    Decoder   | Pretrained |  mIoU |
 |:----------:|:------------:|:----------:|:-----:|

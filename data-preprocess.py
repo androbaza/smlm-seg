@@ -56,6 +56,10 @@ from resources.helpers import *
 FULL IMAGE/PIXEL MASKS EXPERIMENT
 '''
 
+'''
+Microtubules/clathrin
+'''
+
 #1 convert all images to gray values
 # input_dir = '/home/smlm-workstation/segmentation/data/ves/raw_inputs/'
 # save_grey_p(input_dir, output_dir)
@@ -95,13 +99,51 @@ clathrin_masks_path = '/home/smlm-workstation/segmentation/data/clathrin/full_ma
 # input_dir = '/home/smlm-workstation/segmentation/data/full_combined/bit_masks/'
 # calc_weights(input_dir)
 
-mt, cl, bg = np.float32(6510370976.0), np.float32(
-    3653127823.0), np.float32(79555977258.0)
-all_p = np.float32(mt+cl+bg)
-w_bg = (mt+cl)/(bg)
-w_mt = (cl+bg)/mt
-w_cl = (mt+bg)/cl
-ap = w_bg+w_mt+ w_cl
-a, b, c = w_bg/ap, w_mt/ap, w_cl/ap
-print(a, b, c)
+# mt, cl, bg = np.float32(6510370976.0), np.float32(
+#     3653127823.0), np.float32(79555977258.0)
+# all_p = np.float32(mt+cl+bg)
+# w_bg = (mt+cl)/(bg)
+# w_mt = (cl+bg)/mt
+# w_cl = (mt+bg)/cl
+# ap = w_bg+w_mt+ w_cl
+# a, b, c = w_bg/ap, w_mt/ap, w_cl/ap
+# print(a, b, c)
 # print(bg, mt, cl, all_p)
+
+'''
+Microtubules/ER
+'''
+
+#1 convert all images to gray values
+# input_dir = '/home/smlm-workstation/segmentation/data/ves/raw_inputs/'
+# save_grey_p(input_dir, output_dir)
+
+#2 pad images to same size and make mask from pixels
+input_dir = '/home/smlm-workstation/segmentation/data/er/raw_inputs/'
+er_images_path = '/home/smlm-workstation/segmentation/data/er/full_pad'
+er_masks_path = '/home/smlm-workstation/segmentation/data/er/full_mask'
+make_pixelwise_mask_pad(input_dir, er_images_path, er_masks_path)
+
+#3 overlap the images and masks
+
+# mt_images_list, mt_masks_list = get_img_mask_list(
+#     mt_images_path, mt_masks_path)
+# clathrin_images_list, clathrin_masks_list = get_img_mask_list(
+#     clathrin_images_path, clathrin_masks_path)
+
+# output_dir_img = '/home/smlm-workstation/segmentation/data/full_combined/images/'
+# output_dir_masks = '/home/smlm-workstation/segmentation/data/full_combined/masks/'
+
+# combine_masks(natsorted(mt_images_list), natsorted(mt_masks_list),
+#               natsorted(clathrin_images_list), natsorted(clathrin_masks_list),
+#               output_dir_img, output_dir_masks)
+
+#4 convert masks to bit masks
+
+# input_dir_rgb_mask = '/home/smlm-workstation/segmentation/data/full_combined/masks/'
+# output_dir_bit_masks = '/home/smlm-workstation/segmentation/data/full_combined/bit_masks/'
+
+# convert_to_bit_mask(input_dir_rgb_mask, output_dir_bit_masks)
+
+# input_dir = '/home/smlm-workstation/segmentation/data/full_combined/bit_masks/'
+# calc_weights(input_dir)
