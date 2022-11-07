@@ -147,3 +147,41 @@ make_pixelwise_mask_pad(input_dir, er_images_path, er_masks_path)
 
 # input_dir = '/home/smlm-workstation/segmentation/data/full_combined/bit_masks/'
 # calc_weights(input_dir)
+
+'''
+Microtubules/ER
+'''
+
+#1 convert all images to gray values
+# input_dir = '/home/smlm-workstation/segmentation/data/ves/raw_inputs/'
+# save_grey_p(input_dir, output_dir)
+
+#2 pad images to same size and make mask from pixels
+input_dir = '/home/smlm-workstation/segmentation/data/er/raw_inputs/'
+er_images_path = '/home/smlm-workstation/segmentation/data/er/full_pad'
+er_masks_path = '/home/smlm-workstation/segmentation/data/er/full_mask'
+make_pixelwise_mask_pad(input_dir, er_images_path, er_masks_path)
+
+#3 overlap the images and masks
+
+# mt_images_list, mt_masks_list = get_img_mask_list(
+#     mt_images_path, mt_masks_path)
+# clathrin_images_list, clathrin_masks_list = get_img_mask_list(
+#     clathrin_images_path, clathrin_masks_path)
+
+# output_dir_img = '/home/smlm-workstation/segmentation/data/full_combined/images/'
+# output_dir_masks = '/home/smlm-workstation/segmentation/data/full_combined/masks/'
+
+# combine_masks(natsorted(mt_images_list), natsorted(mt_masks_list),
+#               natsorted(clathrin_images_list), natsorted(clathrin_masks_list),
+#               output_dir_img, output_dir_masks)
+
+#4 convert masks to bit masks
+
+# input_dir_rgb_mask = '/home/smlm-workstation/segmentation/data/full_combined/masks/'
+# output_dir_bit_masks = '/home/smlm-workstation/segmentation/data/full_combined/bit_masks/'
+
+# convert_to_bit_mask(input_dir_rgb_mask, output_dir_bit_masks)
+
+# input_dir = '/home/smlm-workstation/segmentation/data/full_combined/bit_masks/'
+# calc_weights(input_dir)

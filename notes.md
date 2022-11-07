@@ -27,7 +27,7 @@
 * anna-palm works only with CPU-tensorflow on RTX3090.
 * 
 
-# September'22
+# September - October '22
 
 ## Notes and ideas
 * It is possible to predict the covered structure behind the other one --> discuss whether this is worth doing.
@@ -57,3 +57,8 @@
 | DeepLabV3+ |  ResNetV1c18 |      +     | 87.89 |
 | DeepLabV3+ |  ResNetV1c50 |      +     | 90.87 |
 | DeepLabV3+ | ResNetV1c100 |      +     | 85.93 |
+
+# November '22
+
+## Logs
+* I noticed that there are impurities in the MT data --> small blobs are definetely visible on the masked images. Will try `remove_small_objects` filtering.
