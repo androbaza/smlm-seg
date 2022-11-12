@@ -64,3 +64,18 @@
 * I noticed that there are impurities in the MT data --> small blobs are definetely visible on the masked images. Will try `remove_small_objects` filtering.
 * successfully removed the blobs with 3 step `remove_small_objects` filtering, minimally affecting the MT structure.
 * MT_vs_ER model performed worse than MT_CL. MT mask was taking ER pieces in many cases. Will try to retrain with Focal loss without transfer learning from previous model.
+
+## Event SMLM notes
+* Why only a small area of the sensor is covered by the image?
+* Rising and falling edges clearly temporally distinguishable.
+* Rings are created because of difference in brightness --> dimmer edges respond slower.
+* Negative events respond on average slower than positive events.
+* Other blinking events in the same area are visible during the ON cycle of other molecules.
+* Acquisition could be started before the dSTORM pumping phase.
+
+## Event SMLM ideas
+* Extracting fast and slow processes from the same acquisition by changing the time binning value.
+* Could be used with dyes that exhibit a comples photophysical behavior, as the falling and rising edges are temporaly distinguishable.
+* Easier demixing based on the ON-time of the different dyes.
+* Adapting the processing conditions to the local density of molecules (in space and in time) could improve both the processing time and the localization performance.
+* Record a system that does not change for a long time and then exhibits a short event.
