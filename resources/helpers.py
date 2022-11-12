@@ -14,7 +14,7 @@ from PIL import Image
 # from openslide.deepzoom import DeepZoomGenerator
 import matplotlib.pyplot as plt
 from skimage.io import imread, imshow, imsave
-# from skimage import morphology
+from skimage import morphology
 # from skimage.measure import label
 # from skimage.exposure import rescale_intensity
 # from skimage.segmentation import random_walker
@@ -22,20 +22,24 @@ from multiprocessing import Pool
 # from PIL import ImageFile
 # ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+
 def save_npy(input_dir, output_dir):
-    filenames = [os.path.join(input_dir, fname) for fname in os.listdir(input_dir)]
+    filenames = [os.path.join(input_dir, fname)
+                 for fname in os.listdir(input_dir)]
     with Pool() as pool:
         pool.map(save_png, filenames)
 
+
 def save_grey_p(input_dir, output_dir):
-    filenames = [os.path.join(input_dir, fname) for fname in os.listdir(input_dir)]
+    filenames = [os.path.join(input_dir, fname)
+                 for fname in os.listdir(input_dir)]
     with Pool() as pool:
         pool.map(save_grey, filenames)
 
 
 def calc_weights(input_dir):
     filenames = natsorted([os.path.join(input_dir, fname)
-                 for fname in os.listdir(input_dir)])
+                           for fname in os.listdir(input_dir)])
     mt, cl, bg = np.float32(0), np.float32(0), np.float32(0)
 
     for filename in filenames:
@@ -55,6 +59,7 @@ def calc_weights(input_dir):
     with open('/home/smlm-workstation/segmentation/data/full_combined/weights.txt', 'w') as f:
         f.write(str(w_bg)+' '+str(w_mt)+' '+str(w_cl))
 
+
 def calculate_num_pixels(fname):
     img = imread(fname, as_gray=1)
     mt = np.count_nonzero(img == 1)
@@ -62,32 +67,37 @@ def calculate_num_pixels(fname):
     bg = 42784681 - (mt + cl)
     return mt, cl, bg
 
+
 def convert_to_bit_mask(input_dir, output_dir):
     filenames = natsorted([os.path.join(input_dir, fname)
-                 for fname in os.listdir(input_dir)])
+                           for fname in os.listdir(input_dir)])
 
     # filenames = natsorted(os.listdir(input_dir))
     # existing = natsorted(os.listdir(output_dir))
     # files = [x for x in filenames if x not in existing]
     # files2 = [os.path.join(input_dir, fname) for fname in files]
-    
+
     with Pool() as pool:
         pool.map(convert_to_bit_mask_p, filenames)
+
 
 def convert_to_bit_mask_p(fname):
     img = imread(fname, as_gray=1)
     img[img == 255] = 1
     img[img == 180] = 2
-    imsave(os.path.join('/home/smlm-workstation/segmentation/data/full_combined/bit_masks/',
+    imsave(os.path.join('/home/smlm-workstation/segmentation/data/full_combined_mt_er/bit_masks/',
            os.path.basename(fname)), img, check_contrast=0)
 
+
 def save_grey(fname):
-    imsave('/home/smlm-workstation/segmentation/data/ves/'+os.path.splitext(os.path.basename(fname))[0] + '.png', imread(fname, as_gray=True), check_contrast=0)
+    imsave('/home/smlm-workstation/segmentation/data/ves/'+os.path.splitext(
+        os.path.basename(fname))[0] + '.png', imread(fname, as_gray=True), check_contrast=0)
+
 
 def save_png(fname):
     imsave('/home/smlm-workstation/segmentation/data/mt_cl/'+os.path.splitext(os.path.basename(fname))[0] + '.png', np.load(
         fname, allow_pickle=True).astype(np.uint8), check_contrast=0)
-        
+
 
 def clean_folder(input_dir):
     for fname in os.listdir(input_dir):
@@ -112,7 +122,7 @@ def make_tiles_w_overlap(input_dir, output_dir):
                 if(np.count_nonzero(tile)/tile.size < 0.01):
                     continue
                 imsave(output_dir + 'A_' + str(img_n) +
-                       "_" + str(row) + "_" + str(column) + ".png", tile, check_contrast = 0)
+                       "_" + str(row) + "_" + str(column) + ".png", tile, check_contrast=0)
                 column += 1
             row += 1
             column = 0
@@ -122,8 +132,8 @@ def make_tiles_w_overlap(input_dir, output_dir):
 def make_pixelwise_mask_pad(input_dir, output_dir, output_dir_mask, size=6541):
     for fname in os.listdir(input_dir):
         img = imread(os.path.join(input_dir, fname), as_gray=1)
-        
-        h,w = img.shape[0], img.shape[1]
+
+        h, w = img.shape[0], img.shape[1]
 
         a = (size - h) // 2
         aa = size - a - h
@@ -133,10 +143,18 @@ def make_pixelwise_mask_pad(input_dir, output_dir, output_dir_mask, size=6541):
 
         imsave(os.path.join(output_dir, os.path.splitext(
             os.path.splitext(fname)[0])[0])+"_padded.png", padded.astype(np.uint8), check_contrast=0)
+        # padded = (morphology.remove_small_objects(
+        #     padded > 0, 40, connectivity=50)).astype(np.uint8)*255
+
+        # padded = (morphology.remove_small_objects(
+        #     padded > 0, 32, connectivity=200)).astype(np.uint8)*255
+
+        # padded = (morphology.remove_small_objects(
+        #     padded > 0, 15, connectivity=15)).astype(np.uint8)*255        
 
         padded = (padded > 0)*255
         imsave(os.path.join(output_dir_mask, os.path.splitext(
-            os.path.splitext(fname)[0])[0])+"_mask_padded.png", padded.astype(np.uint8), check_contrast=0)
+            os.path.splitext(fname)[0])[0])+"_mask_padded_fil.png", padded.astype(np.uint8), check_contrast=0)
 
 # def anna_palm_process(input_dir, output_dir):
 #     for fname in os.listdir(input_dir):
@@ -146,7 +164,7 @@ def make_pixelwise_mask_pad(input_dir, output_dir, output_dir_mask, size=6541):
 #             blur = (img*255).astype(np.uint8)
 #             # ret, fig = cv2.threshold(
 #             #     blur, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-            
+
 #             ret, fig2 = cv2.threshold(
 #                 blur, 5, 255, cv2.THRESH_BINARY)
 
@@ -186,7 +204,7 @@ def make_pixelwise_mask_pad(input_dir, output_dir, output_dir_mask, size=6541):
 
 
 def combine_masks(mt_images_list, mt_masks_list, ves_images_list, ves_masks_list, output_dir_img, output_dir_masks):
-    
+
     images_mt = [read(f) for f in mt_images_list]
     images_ves = [read(f) for f in ves_images_list]
 
@@ -194,13 +212,14 @@ def combine_masks(mt_images_list, mt_masks_list, ves_images_list, ves_masks_list
                 for mask in (read(f) for f in mt_masks_list)]
     masks_ves = [mask_paletterize(mask, 180)
                  for mask in (read(f) for f in ves_masks_list)]
-    
+
     k = 0
     for i in range(0, len(images_mt)):
         for j in range(0, len(images_ves)):
-            
+
             # save original overlap
-            comb_mask, comb_im = embed_pair(images_mt[i], masks_mt[i], images_ves[j], masks_ves[j])
+            comb_mask, comb_im = embed_pair(
+                images_mt[i], masks_mt[i], images_ves[j], masks_ves[j])
             imsave(str(output_dir_img) +
                    "{:07d}.png".format(k), comb_im, check_contrast=0)
             imsave(str(output_dir_masks) +
@@ -212,31 +231,34 @@ def combine_masks(mt_images_list, mt_masks_list, ves_images_list, ves_masks_list
                 rot += 90
                 rot2 += 90
                 k += 1
-                comb_mask, comb_im = embed_pair(rotate(images_mt[i], rot), rotate(masks_mt[i], rot), rotate(images_ves[j], rot2), rotate(masks_ves[j], rot2))
+                comb_mask, comb_im = embed_pair(rotate(images_mt[i], rot), rotate(
+                    masks_mt[i], rot), rotate(images_ves[j], rot2), rotate(masks_ves[j], rot2))
                 imsave(str(output_dir_img) +
-                                  "{:07d}.png".format(k), comb_im, check_contrast=0)
+                       "{:07d}.png".format(k), comb_im, check_contrast=0)
                 imsave(str(output_dir_masks) +
-                                  "{:07d}.png".format(k), comb_mask, check_contrast=0)
+                       "{:07d}.png".format(k), comb_mask, check_contrast=0)
 
             # save flipped rotations
             rot, rot2 = 90, 0
             for x in range(3):
-              rot += 90
-              rot2 += 90
-              k += 1
-              comb_mask, comb_im = embed_pair(flip(rotate(images_mt[i], rot)), flip(rotate(masks_mt[i], rot)), flip(rotate(images_ves[j], rot2)), flip(rotate(masks_ves[j], rot2)))
-              imsave(str(output_dir_img) +
-                                "{:07d}.png".format(k), comb_im, check_contrast=0)
-              imsave(str(output_dir_masks) +
-                     "{:07d}.png".format(k), comb_mask, check_contrast=0)
+                rot += 90
+                rot2 += 90
+                k += 1
+                comb_mask, comb_im = embed_pair(flip(rotate(images_mt[i], rot)), flip(rotate(
+                    masks_mt[i], rot)), flip(rotate(images_ves[j], rot2)), flip(rotate(masks_ves[j], rot2)))
+                imsave(str(output_dir_img) +
+                       "{:07d}.png".format(k), comb_im, check_contrast=0)
+                imsave(str(output_dir_masks) +
+                       "{:07d}.png".format(k), comb_mask, check_contrast=0)
 
             # now change overlap order
             k += 1
 
             # save original overlap
-            comb_mask, comb_im = embed_pair(images_ves[j], masks_ves[j], images_mt[i], masks_mt[i])
+            comb_mask, comb_im = embed_pair(
+                images_ves[j], masks_ves[j], images_mt[i], masks_mt[i])
             imsave(str(output_dir_img) +
-                              "{:07d}.png".format(k), comb_im, check_contrast=0)
+                   "{:07d}.png".format(k), comb_im, check_contrast=0)
             imsave(str(output_dir_masks) +
                    "{:07d}.png".format(k), comb_mask, check_contrast=0)
 
@@ -245,24 +267,26 @@ def combine_masks(mt_images_list, mt_masks_list, ves_images_list, ves_masks_list
                 rot += 90
                 rot2 += 90
                 k += 1
-                comb_mask, comb_im = embed_pair(rotate(images_mt[i], rot), rotate(masks_mt[i], rot), rotate(images_ves[j], rot2), rotate(masks_ves[j], rot2))
+                comb_mask, comb_im = embed_pair(rotate(images_mt[i], rot), rotate(
+                    masks_mt[i], rot), rotate(images_ves[j], rot2), rotate(masks_ves[j], rot2))
                 imsave(str(output_dir_img) +
-                                  "{:07d}.png".format(k), comb_im, check_contrast=0)
+                       "{:07d}.png".format(k), comb_im, check_contrast=0)
                 imsave(str(output_dir_masks) +
                        "{:07d}.png".format(k), comb_mask, check_contrast=0)
 
             # save flipped rotations
             rot, rot2 = 270, 90
             for x in range(3):
-              rot += 90
-              rot2 += 90
-              k += 1
-              comb_mask, comb_im = embed_pair(flip(rotate(images_mt[i], rot)), flip(rotate(masks_mt[i], rot)), flip(rotate(images_ves[j], rot2)), flip(rotate(masks_ves[j], rot2)))
-              imsave(str(output_dir_img) +
-                                "{:07d}.png".format(k), comb_im, check_contrast=0)
-              imsave(str(output_dir_masks) +
-                                "{:07d}.png".format(k), comb_mask, check_contrast=0)
-
+                rot += 90
+                rot2 += 90
+                k += 1
+                comb_mask, comb_im = embed_pair(flip(rotate(images_mt[i], rot)), flip(rotate(
+                    masks_mt[i], rot)), flip(rotate(images_ves[j], rot2)), flip(rotate(masks_ves[j], rot2)))
+                imsave(str(output_dir_img) +
+                       "{:07d}.png".format(k), comb_im, check_contrast=0)
+                imsave(str(output_dir_masks) +
+                       "{:07d}.png".format(k), comb_mask, check_contrast=0)
+            print(k)
             k += 1
         print(k)
     print('finished')
@@ -271,15 +295,16 @@ def combine_masks(mt_images_list, mt_masks_list, ves_images_list, ves_masks_list
 def list_files(path):
     return [f for f in listdir(path) if isfile(join(path, f))]
 
+
 def get_img_mask_list(img_path, mask_path, img_prefix='data', mask_prefix='masked_'):
 
     files_path = list_files(img_path)
     files_path = [os.path.join(img_path, f) for f in files_path if
-                    f.split('.')[-1].lower() in ['jpg', 'jpeg', 'png']]
+                  f.split('.')[-1].lower() in ['jpg', 'jpeg', 'png']]
 
     mask_files_path = list_files(mask_path)
     mask_files_path = [os.path.join(mask_path, f) for f in mask_files_path if
-                        f.split('.')[-1].lower() in ['jpg', 'jpeg', 'png']]
+                       f.split('.')[-1].lower() in ['jpg', 'jpeg', 'png']]
 
     return files_path, mask_files_path
 
@@ -289,6 +314,7 @@ def get_images_list(path):
     files_path = [os.path.join(path, f) for f in files_path if f.split(
         '.')[-1].lower() in ['jpg', 'jpeg', 'png']]
     return files_path
+
 
 def read(path):
     """Reads an image from the specified path.

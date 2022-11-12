@@ -62,3 +62,5 @@
 
 ## Logs
 * I noticed that there are impurities in the MT data --> small blobs are definetely visible on the masked images. Will try `remove_small_objects` filtering.
+* successfully removed the blobs with 3 step `remove_small_objects` filtering, minimally affecting the MT structure.
+* MT_vs_ER model performed worse than MT_CL. MT mask was taking ER pieces in many cases. Will try to retrain with Focal loss without transfer learning from previous model.
