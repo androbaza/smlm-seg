@@ -79,3 +79,4 @@
 * Easier demixing based on the ON-time of the different dyes.
 * Adapting the processing conditions to the local density of molecules (in space and in time) could improve both the processing time and the localization performance.
 * Record a system that does not change for a long time and then exhibits a short event.
+* Ask Clement about when to expect Localization script.
