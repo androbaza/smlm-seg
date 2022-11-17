@@ -80,3 +80,9 @@
 * Adapting the processing conditions to the local density of molecules (in space and in time) could improve both the processing time and the localization performance.
 * Record a system that does not change for a long time and then exhibits a short event.
 * Ask Clement about when to expect Localization script.
+* Generate ThunderSTORM files from events?
+* https://github.com/Endesfelder-Lab/SMLMComputational
+* https://github.com/ZhuangLab/storm-analysis
+* https://github.com/aherbert/gdsc-smlm
+* https://github.com/EliasNehme/DeepSTORM3D
+* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9580916/pdf/fbinf-01-817254.pdf
