@@ -74,6 +74,7 @@
 * Acquisition could be started before the dSTORM pumping phase.
 
 ## Event SMLM ideas
+* When reconstructing frames from events, if a "large event" --> fluorophore starts appearing over already existing psf --> write it to a separate frame to avoid overlap.
 * Extracting fast and slow processes from the same acquisition by changing the time binning value.
 * Could be used with dyes that exhibit a comples photophysical behavior, as the falling and rising edges are temporaly distinguishable.
 * Easier demixing based on the ON-time of the different dyes.
@@ -81,6 +82,7 @@
 * Record a system that does not change for a long time and then exhibits a short event.
 * Ask Clement about when to expect Localization script.
 * Generate ThunderSTORM files from events?
+* https://github.com/TuragaLab/DECODE
 * https://github.com/Endesfelder-Lab/SMLMComputational
 * https://github.com/ZhuangLab/storm-analysis
 * https://github.com/aherbert/gdsc-smlm
