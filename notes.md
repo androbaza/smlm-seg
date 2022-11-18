@@ -67,10 +67,10 @@
 
 ## Event SMLM notes
 * Why only a small area of the sensor is covered by the image?
-* Rising and falling edges clearly temporally distinguishable.
-* Rings are created because of difference in brightness --> dimmer edges respond slower.
+* Rising and falling edges clearly temporally distinguishable --> can we use the falling edge as a separate blink of the fluorophore, so we have 2x blinks?
+* Rings are created because of difference in brightness --> dimmer edges respond slower --> so the rings are not Airy rings?
 * Negative events respond on average slower than positive events.
-* Other blinking events in the same area are visible during the ON cycle of other molecules.
+* Other blinking events in the same area are visible during the ON cycle of other molecules --> one of the greatest advantages? Try high density imaging?
 * Acquisition could be started before the dSTORM pumping phase.
 
 ## Event SMLM ideas
