@@ -21,7 +21,7 @@ from skimage import morphology
 from multiprocessing import Pool
 # from PIL import ImageFile
 # ImageFile.LOAD_TRUNCATED_IMAGES = True
-
+from random import random
 
 def save_npy(input_dir, output_dir):
     filenames = [os.path.join(input_dir, fname)
@@ -85,7 +85,7 @@ def convert_to_bit_mask_p(fname):
     img = imread(fname, as_gray=1)
     img[img == 255] = 1
     img[img == 180] = 2
-    imsave(os.path.join('/home/smlm-workstation/segmentation/data/full_combined_mt_er/bit_masks/',
+    imsave(os.path.join('/home/smlm-workstation/segmentation/data/full_combined_mt_cl_summed/bit_masks/',
            os.path.basename(fname)), img, check_contrast=0)
 
 
@@ -144,17 +144,24 @@ def make_pixelwise_mask_pad(input_dir, output_dir, output_dir_mask, size=6541):
         imsave(os.path.join(output_dir, os.path.splitext(
             os.path.splitext(fname)[0])[0])+"_padded.png", padded.astype(np.uint8), check_contrast=0)
         # padded = (morphology.remove_small_objects(
-        #     padded > 0, 40, connectivity=50)).astype(np.uint8)*255
+        #     padded > 0, 40, connectivity=70)).astype(np.uint8)*255
+
+        padded = (morphology.remove_small_objects(
+            padded > 0, 45, connectivity=5)).astype(np.uint8)*255
 
         # padded = (morphology.remove_small_objects(
-        #     padded > 0, 32, connectivity=200)).astype(np.uint8)*255
-
-        # padded = (morphology.remove_small_objects(
-        #     padded > 0, 15, connectivity=15)).astype(np.uint8)*255        
-
+        #     padded > 0, 45, connectivity=10)).astype(np.uint8)*255        
+        
         padded = (padded > 0)*255
+
+        for i in range(padded.shape[0]):
+            for j in range(padded.shape[1]):
+                if random() > 0.5:
+                    padded[i,j] = 0
+
+
         imsave(os.path.join(output_dir_mask, os.path.splitext(
-            os.path.splitext(fname)[0])[0])+"_mask_padded_fil.png", padded.astype(np.uint8), check_contrast=0)
+            os.path.splitext(fname)[0])[0])+"_mask_padded_fil3.png", padded.astype(np.uint8), check_contrast=0)
 
 # def anna_palm_process(input_dir, output_dir):
 #     for fname in os.listdir(input_dir):
@@ -428,7 +435,7 @@ def embed_pair(img_top, mask_top, img_bottom, mask_bottom):
     cc = skimage.util.img_as_uint(img_bottom.copy())
 
     # copy the non-zero pixels from the top image to bottom image
-    cc[top_non_zero] = skimage.util.img_as_uint(img_top[top_non_zero])
+    cc[top_non_zero] += skimage.util.img_as_uint(img_top[top_non_zero])
 
     return mask_comb, cc
 
