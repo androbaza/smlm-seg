@@ -1,16 +1,4 @@
 # August'22
-## Event camera SMLM setup:
-### Hardware
-* Key idea: match the focal planes. Then finding the sample will be possible with the EMCCD camera, then beam splitter is changed to mirror mode to perform imaging solely on event sensor.
-* Parts for the optical setup according to 'Methods' section in Cabriel, Specht and Izeddin [paper](https://doi.org/10.1101/2022.07.22.501162):
-  *  RM21 body and a MANNZ micro- and nano-positioner. 
-  *  Nikon 100x 1.49NA APO TIRF SR oil immersion. 
-  *  638 nm laser (LBX-638-180, 180 mW, Oxxius) and a 488 nm
- laser (LBX-488-100, 100 mW, Oxxius) with a 405 nm laser for pumping (LBX-405-50, 50 mW, Oxxius).
-  * A full multiband filter set (LF405/488/561/635-A-000, Semrock).
-  * EMCCD camera (iXon Ultra 897, Andor)
-  * EVK V2 Gen4.1, Prophesee
-  * focal doublets to adjust the pixel sizes to 107 nm (EMCCD) and 65 nm (event-based sensor) in the object plane.
   
 ### Software
 * Software is available at the [corresponding github repo](https://github.com/Clement-Cabriel/Evb-SMLM). The code is quite well documented and seems readable, at first glance.
@@ -25,7 +13,6 @@
 * rewriting the pipeline for MTs and vesicles in two separate scripts --> done.
 * got the tiles working again.
 * anna-palm works only with CPU-tensorflow on RTX3090.
-* 
 
 # September - October '22
 
@@ -115,27 +102,3 @@ VitAE-B + RVSA |  UperNet | Potsdam Pretrain, 80k, focal+dice
 * successfully removed the blobs with 3 step `remove_small_objects` filtering, minimally affecting the MT structure.
 * MT_vs_ER model performed worse than MT_CL. MT mask was taking ER pieces in many cases. Will try to retrain with Focal loss without transfer learning from previous model.
 * Compare overlay types.
-
-## Event SMLM notes
-* Why only a small area of the sensor is covered by the image?
-* Rising and falling edges clearly temporally distinguishable --> can we use the falling edge as a separate blink of the fluorophore, so we have 2x blinks?
-* Rings are created because of difference in brightness --> dimmer edges respond slower --> so the rings are not Airy rings?
-* Negative events respond on average slower than positive events.
-* Other blinking events in the same area are visible during the ON cycle of other molecules --> one of the greatest advantages? Try high density imaging?
-* Acquisition could be started before the dSTORM pumping phase.
-
-## Event SMLM ideas
-* When reconstructing frames from events, if a "large event" --> fluorophore starts appearing over already existing psf --> write it to a separate frame to avoid overlap.
-* Extracting fast and slow processes from the same acquisition by changing the time binning value.
-* Could be used with dyes that exhibit a comples photophysical behavior, as the falling and rising edges are temporaly distinguishable.
-* Easier demixing based on the ON-time of the different dyes.
-* Adapting the processing conditions to the local density of molecules (in space and in time) could improve both the processing time and the localization performance.
-* Record a system that does not change for a long time and then exhibits a short event.
-* Ask Clement about when to expect Localization script.
-* Generate ThunderSTORM files from events?
-* https://github.com/TuragaLab/DECODE
-* https://github.com/Endesfelder-Lab/SMLMComputational
-* https://github.com/ZhuangLab/storm-analysis
-* https://github.com/aherbert/gdsc-smlm
-* https://github.com/EliasNehme/DeepSTORM3D
-* https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9580916/pdf/fbinf-01-817254.pdf
